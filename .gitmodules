@@ -1,0 +1,3 @@
+[submodule "custom/plugins/zsh-aws-vault"]
+	path = custom/plugins/zsh-aws-vault
+	url = git@github.com:blimmer/zsh-aws-vault.git
