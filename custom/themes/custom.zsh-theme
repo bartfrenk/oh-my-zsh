@@ -5,10 +5,19 @@ git_segment() {
 }
 
 aws_segment() {
+  local SEGMENT=""
   if (( ${+AWS_VAULT} )); then
-    echo -n "%{$fg[red]%}(aws:$AWS_VAULT)%{$reset_color%} "
-  else
+    SEGMENT="${SEGMENT}${AWS_VAULT}"
+  fi
+
+  if (( ${+AWS_EXPIRATION} )); then
+    SEGMENT="${SEGMENT}$(date --date=${AWS_EXPIRATION} +%H:%M)"
+  fi
+
+  if [ -z "$SEGMENT" ]; then
     echo -n ""
+  else
+    echo -n "%{$fg[red]%}(aws|$SEGMENT)%{$reset_color%} "
   fi
 }
 
@@ -38,7 +47,7 @@ PROMPT=$'$(prompt)%{$fg_bold[white]%}$%{$reset_color%} '
 
 PROMPT2="%{$fg_blod[black]%}%_> %{$reset_color%}"
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}(git:"
+ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}(git|"
 ZSH_THEME_GIT_PROMPT_SUFFIX=")%{$reset_color%} "
 ZSH_THEME_GIT_PROMPT_DIRTY=" %{$fg[red]%}*%{$fg[green]%}"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
