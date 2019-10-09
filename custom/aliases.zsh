@@ -31,6 +31,10 @@ alert() {
   notify-send --urgency=low "$([ $? -eq 0 ] && echo success || echo failure)"
 }
 
+become() {
+  eval $($HOME/.local/bin/become "$1")
+}
+
 py() {
   case $1 in
     "clean")
