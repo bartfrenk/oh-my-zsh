@@ -5,19 +5,18 @@ git_segment() {
 }
 
 aws_segment() {
-  local SEGMENT=""
+  local segments=()
   if (( ${+AWS_VAULT} )); then
-    SEGMENT="${SEGMENT}${AWS_VAULT}"
+    segments+=("${AWS_VAULT}")
   fi
 
   if (( ${+AWS_EXPIRATION} )); then
-    SEGMENT="${SEGMENT}$(date --date=${AWS_EXPIRATION} +%H:%M)"
+    segments+=("$(date --date=${AWS_EXPIRATION} +%H:%M)")
   fi
-
-  if [ -z "$SEGMENT" ]; then
+  if [ -z "${segments}" ]; then
     echo -n ""
   else
-    echo -n "%{$fg[red]%}(aws|$SEGMENT)%{$reset_color%} "
+    echo -n "%{$fg[red]%}(aws|${segments})%{$reset_color%} "
   fi
 }
 
