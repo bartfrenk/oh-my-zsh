@@ -42,7 +42,8 @@ py() {
       ;;
     "init")
       pyenv virtualenv 3.6.8 "$2"
-      echo "$PWD/src" > "$HOME/.pyenv/versions/$2/lib/python3.6/site-packages/$2.pth"
+      echo "$PWD/src" >> "$HOME/.pyenv/versions/$2/lib/python3.6/site-packages/$2.pth"
+      echo "$PWD/test" >> "$HOME/.pyenv/versions/$2/lib/python3.6/site-packages/$2.pth"
       pyenv local "$2"
       ;;
   esac
