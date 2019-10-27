@@ -31,6 +31,16 @@ alert() {
   notify-send --urgency=low "$([ $? -eq 0 ] && echo success || echo failure)"
 }
 
+cafe() {
+  # Dump random noise to the terminal
+  cat /dev/urandom | hexdump -C | grep "ca fe"
+}
+
+whatip() {
+  # Print your own outgoing IP
+  dig +short myip.opendns.com @resolver1.opendns.com
+}
+
 become() {
   eval $($HOME/.local/bin/become "$1")
 }
@@ -45,6 +55,8 @@ py() {
       echo "$PWD/src" >> "$HOME/.pyenv/versions/$2/lib/python3.6/site-packages/$2.pth"
       echo "$PWD/test" >> "$HOME/.pyenv/versions/$2/lib/python3.6/site-packages/$2.pth"
       pyenv local "$2"
+      pip install pylint==2.4.3
+      pip install black==19.3b0
       ;;
   esac
 }
