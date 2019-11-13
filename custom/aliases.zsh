@@ -60,3 +60,17 @@ py() {
       ;;
   esac
 }
+
+cl() {
+  # Copy the last command to the clipboard
+  history | tail -n 1 | xclip -selection clipboard
+}
+
+config() {
+  case $1 in
+    "db")
+      echo "!aws/secret prod/shared/rds-restricted" | miniscule
+      ;;
+  esac
+}
+
