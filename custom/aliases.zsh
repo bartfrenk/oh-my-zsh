@@ -2,6 +2,7 @@
 
 alias ls="ls --color=auto --group-directories-first --classify"
 alias xcb='xclip -selection clipboard'
+alias ecs='/opt/bin/ecs-cli-linux-amd64-latest'
 
 aws-session() {
   AWS_CONFIG=$HOME/.aws.vault/config /opt/bin/aws-vault exec \
@@ -70,6 +71,51 @@ config() {
   case $1 in
     "db")
       echo "!aws/secret prod/shared/rds-restricted" | miniscule
+      ;;
+  esac
+}
+
+json() {
+  $HOME/bin/as_json.py
+}
+
+ai() {
+  local ecs_='/opt/bin/ecs-cli-linux-amd64-latest'
+  case $1 in
+    "db")
+      local credentials=$(config db | json)
+      local host=$(echo $credentials | jq .host | tr -d '"')
+      local user=$(echo $credentials | jq .username | tr -d '"')
+      local password=$(echo $credentials | jq .password | tr -d '"')
+      local db=$(echo $credentials | jq .dbname | tr -d '"')
+      psql "postgresql://$user:$password@$host/$db"
+      ;;
+    "logs")
+      if [ -z "$2" ]; then
+        echo "Usage: $0 logs <env> <namespace>-<name>"
+      else
+        local cluster="$2-shared-services"
+        local uuid='[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}'
+        local output=$(with-aws "$ecs_" ps --cluster "$cluster")
+        local name=$(echo $output | grep "$3" | head -n 1 | awk '{print $0}')
+        local task_id=$(echo $name | grep -Po "$uuid")
+        with-aws "$ecs_" logs --task-id="$task_id" --cluster "$cluster" "$argv[4,-1]"
+      fi
+      ;;
+    "services")
+      if [ -z "$2" ]; then
+        echo "Usage: $0 services <env> <namespace>-<name>"
+      fi
+      local cluster="$2-shared-services"
+      with-aws "$ecs_" ps --cluster "$cluster"
+  esac
+}
+
+
+vpn() {
+  case $1 in
+    "tmp")
+      sudo openvpn --client --config "$HOME/.ovpn/ai-ghg-temporary-vpn-client.ovpn"
       ;;
   esac
 }
