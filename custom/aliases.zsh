@@ -3,6 +3,7 @@
 alias ls="ls --color=auto --group-directories-first --classify"
 alias xcb='xclip -selection clipboard'
 alias ecs='/opt/bin/ecs-cli-linux-amd64-latest'
+alias apr="apparatus"
 
 aws-session() {
   AWS_CONFIG=$HOME/.aws.vault/config /opt/bin/aws-vault exec \
@@ -82,6 +83,9 @@ json() {
 ai() {
   local ecs_='/opt/bin/ecs-cli-linux-amd64-latest'
   case $1 in
+    "secret")
+      echo "!aws/secret $2" | miniscule
+      ;;
     "db")
       local credentials=$(config db | json)
       local host=$(echo $credentials | jq .host | tr -d '"')
@@ -115,7 +119,7 @@ ai() {
 vpn() {
   case $1 in
     "tmp")
-      sudo openvpn --client --config "$HOME/.ovpn/ai-ghg-temporary-vpn-client.ovpn"
+      sudo openvpn --client --config "$HOME/.ovpn/ai-ghg-temporary-vpn-client-t3.ovpn"
       ;;
   esac
 }
