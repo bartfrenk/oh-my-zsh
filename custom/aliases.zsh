@@ -71,7 +71,7 @@ cl() {
 config() {
   case $1 in
     "db")
-      echo "!aws/secret prod/shared/rds-restricted" | miniscule
+      miniscule -c '!aws/secret prod/shared/rds-restricted'
       ;;
   esac
 }
@@ -84,10 +84,11 @@ ai() {
   local ecs_='/opt/bin/ecs-cli-linux-amd64-latest'
   case $1 in
     "secret")
-      echo "!aws/secret $2" | miniscule
+      echo "!aws/secret $2"
       ;;
     "db")
       local credentials=$(config db | json)
+      echo $credentials
       local host=$(echo $credentials | jq .host | tr -d '"')
       local user=$(echo $credentials | jq .username | tr -d '"')
       local password=$(echo $credentials | jq .password | tr -d '"')
